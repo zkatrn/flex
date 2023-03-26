@@ -33,30 +33,19 @@ export const mergeDeep = (target: any, ...sources: any): any => {
   return mergeDeep(target, ...sources);
 };
 
-const getCssProperty = (property: string): string => {
-  switch (property) {
-    case 'align': {
-      return 'alignItems';
-    }
-    case 'bgColor': {
-      return 'backgroundColor';
-    }
-    case 'dir': {
-      return 'direction';
-    }
-    case 'justify': {
-      return 'justifyContent';
-    }
-    case 'm': {
-      return 'margin';
-    }
-    case 'p': {
-      return 'padding';
-    }
-    default:
-      return property;
-  }
-};
+const cssMappedProperties = {
+  align: 'alignItems',
+  basis: 'flexBasis',
+  bgColor: 'backgroundColor',
+  dir: 'direction',
+  grow: 'flexGrow',
+  justify: 'justifyContent',
+  m: 'margin',
+  p: 'padding',
+  shrink: 'flexShrink',
+} as const;
+
+export type CSSMappedPropertyType = keyof typeof cssMappedProperties;
 
 /************************/
 
@@ -89,7 +78,8 @@ export const generateCss = (properties: any) => {
 
   for (const property in properties) {
     if (!!properties[property]) {
-      const cssProperty = getCssProperty(property);
+      const cssProperty =
+        cssMappedProperties[property as CSSMappedPropertyType] || property;
       const cssPropertyCss = generatePropertyCss<GenericCSSType<CSSProperties>>(
         properties[property],
         cssProperty
